@@ -1,0 +1,46 @@
+    while(next_state_pointer != -1 ){
+
+        next_state_pointer = pointers[m_index(i - delta_x(current_state), j - delta_y(current_state), current_state)];
+        i = i - delta_x(current_state);
+        j = j - delta_y(current_state)
+
+        if (_state_readings[next_state_pointer][0] == 1 and _state_readings[next_state_pointer][1] == 1){
+            // pair read
+
+            std::cout << "E XY: [" << i << "][" << j << "] " << next_state_pointer << "\t " << _sequence_x[i] << " " << _sequence_y[j] << "  s(" << i - 1 << ")(" << j - 1 << ") ";
+            annotated_x[ix] = _sequence_x[i];
+            annotated_y[iy] = _sequence_y[j];
+            i--;j--;
+
+        }
+        if (_state_readings[next_state_pointer][0] == 1 and _state_readings[next_state_pointer][1] == 0){
+            // X read
+
+            std::cout << "E  X: [" << i << "][" << j << "] " << next_state_pointer << "\t " << _sequence_x[i - 1] << " " << '-' << "  s(" << i - 1 << ")(" << j - 1 << ") ";
+            annotated_x[ix] = _sequence_x[i];
+            annotated_y[iy] = '-';
+            i--;
+
+
+        }
+        if (_state_readings[next_state_pointer][0] == 0 and _state_readings[next_state_pointer][1] == 1){
+            // Y read
+
+            std::cout << "E  Y: [" << i << "][" << j << "] " << next_state_pointer << "\t " << '-' << " " << _sequence_y[j - 1] << "  s(" << i - 1 << ")(" << j - 1 << ") ";
+            annotated_x[ix] = '-';
+            annotated_y[iy] = _sequence_y[j];
+            j--;
+
+        }
+        //silent without change
+        // --
+
+
+        // get new pointer
+        next_state_pointer = pointers[m_index(i - delta_x(k), j - delta_y(k), current_state)];
+        states_path[s] = next_state_pointer;
+        std::cout << "\t > New: [" << i << "][" << j << "] " << next_state_pointer << std::endl;
+        ix++; iy++; s++;
+
+
+    }

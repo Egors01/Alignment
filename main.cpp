@@ -18,10 +18,19 @@ int main() {
     Pair_HMM A(5,25,transitions,emissions);
 
 
-    A.set_observations_x("AAGGGT");
-    A.set_observations_y("AATAAGCGCGCGCGA");
+    //A.set_observations("ACTGTAAAA");
+    //A.set_observations("AAAABBBBAA");
 
-    A.public_call();
 
+
+    std::string s1 = "ATATATATATA";
+    std::string s2 = "TATATATATAT" ;
+    A.set_observations_x(s1);
+    A.set_observations_y(s2);
+
+
+    //A.test_public_call();
+    float f = A.calculate_viterbi_alignment ();
+    std::cout<<"X: "<<s1<<" "<<s1.length()<<'\n'<<"Y: "<<s2<<" "<<s2.length()<<std::endl;
     return 0;
 }
