@@ -15,8 +15,6 @@ Pair_HMM::Pair_HMM(int n_states, int n_observables,
     _n_observables = n_observables;
 
 
-    _observations = NULL;
-
     _sequence_x = NULL;
     _sequence_y = NULL;
 
@@ -25,28 +23,31 @@ Pair_HMM::Pair_HMM(int n_states, int n_observables,
 
     _model_name = "Alignment model (default)";
     _state_readings = new int[_n_states][2];
-    calculate_states_readings();
-
-
-
+    calculate_states_readings(); // get states properties
 
 }
+
+Pair_HMM::~Pair_HMM() {
+    //delete[] _transitions;
+    //delete[] _emissions;
+    delete[] _state_readings;
+    delete[] _sequence_x;
+    delete[] _sequence_y;
+
+}
+
 void Pair_HMM::test_public_call()
 {
     float a = get_emission_proba(3,2,2) ;
-    std::cout<<"test putput "<<a<<std::endl;
+    std::cout<<"test output "<<a<<std::endl;
 }
-Pair_HMM::~Pair_HMM() {
-    delete[] _transitions;
-    delete[] _emissions;
 
-}
 
 
 
 void Pair_HMM::calculate_states_readings(){
 
-    // this function called once the emission matrix is read.
+    // this function is called once in the class constructor.
     // it looks in emissions matrix and saves if each state reads from X or Y sequence.
     // It saves reads from sequence to _state_readings
     // Acess: _state_readings[STATE][ 0|1  ( X or Y) ] = 0|1 (state reads| doesnt read)
@@ -66,6 +67,7 @@ void Pair_HMM::calculate_states_readings(){
     for (int k = 0; k < _n_states; k++) {
         int i = 0;
 
+        // for clarity here used several bool vars to  reflect possible state outcomes
         bool counted_two = false;
         bool counted_x = false;
         bool counted_y = false;
@@ -81,7 +83,7 @@ void Pair_HMM::calculate_states_readings(){
             std::cout<<k<<" is pair-read state "<< std::endl;
 
         }
-        else { //16 17 18 19
+        else { //16 17 18 19 check
             while (i < 20 and not(counted_x)) {
                 if (_emissions[k * _n_observables + i] > 0)
                     counted_x = true;
@@ -93,7 +95,7 @@ void Pair_HMM::calculate_states_readings(){
                 std::cout<<k<<" is x- emit state "<< std::endl;
 
             }
-            else{ // 20 21 22 23
+            else{ // 20 21 22 23 check
                 while (i < 24 and not(counted_y)) {
                     if (_emissions[k * _n_observables + i] > 0)
                         counted_y = true;
@@ -105,7 +107,7 @@ void Pair_HMM::calculate_states_readings(){
                     std::cout<<k<<" is y- emit state "<< std::endl;
 
                 }
-                else{
+                else{ //other outcomes not considered. setting silent.
                     this->_state_readings[k][0] = 0;
                     this->_state_readings[k][1] = 0;
                     std::cout<<k<<" is silent state "<< std::endl;
@@ -117,33 +119,22 @@ void Pair_HMM::calculate_states_readings(){
 
 }
 
-void Pair_HMM::set_observations(std::string observations) {
-
-    const char* seq_array = observations.c_str();
-    for (int i = 0; i < observations.length(); i++) {
-        //std::cout<<seq_array[i]<<std::endl;
-    }
-
-    _sequence_test = new char [observations.length()+1];
-    std::strcpy (_sequence_test, observations.c_str());
-    for (int i = 0; i < observations.length(); i++) {
-        std::cout<<_sequence_test[i];
-    }
-    std::cout<<std::endl;
-
-
-}
 
 void Pair_HMM::set_observations_x(const std::string& observations) {
 
+    if (_sequence_x!=NULL) {
+        delete [] _sequence_x;}
     _n_x = observations.length();
     _sequence_x = new char [observations.length()+1];
     std::strcpy (_sequence_x, observations.c_str());
+
 
 }
 
 void Pair_HMM::set_observations_y(const std::string& observations) {
 
+    if (_sequence_y!=NULL) {
+        delete [] _sequence_y;}
     _n_y = observations.length();
     _sequence_y = new char [observations.length()+1];
     std::strcpy (_sequence_y, observations.c_str());
@@ -247,6 +238,11 @@ float Pair_HMM::get_emission_proba(int state,int i,int j){
         //int emission_matrix_ind = 24;
         //return _emissions[state * _n_observables + emission_matrix_ind];
     }
+    else{ //if _state_readings
+        std::cout<<"Cannot find _state_readings[state][0] _state_readings[state][1] "
+                   "for arguments i,j: "<<i<<", "<<j<<std::endl;
+        throw std::invalid_argument( "received wrong position");
+    }
 }
 
 int Pair_HMM::m_index(int x, int y, int z){
@@ -256,12 +252,12 @@ int Pair_HMM::m_index(int x, int y, int z){
 
 float Pair_HMM::calculate_forward_alignment_prob() {
 
-    int k, m, t,i,j,z;
+    int k, m,i,j;
 
     float *mforward = new float[(_n_x + 1) * (_n_y + 1) * _n_states];
 
     // Initialization step
-    std::cout << "Forward prob initialization  ...  "<< std::endl;
+    //std::cout << "Forward prob initialization  ...  "<< std::endl;
 
     for (k = 0; k <  _n_states; k++) {
         for (i = 0; i <=  _n_x; i++) {
@@ -273,10 +269,9 @@ float Pair_HMM::calculate_forward_alignment_prob() {
     mforward[m_index(0, 0, 0)] = 1;
 
     //   Calculation
-    std::cout << "Forward calculation ...  "<< std::endl;
-    float path_elem = 0 ,ml_path_proba;
-    int i_prev,j_prev;
+    //std::cout << "Forward calculation ...  "<< std::endl;
 
+    int i_prev,j_prev;
 
     // Matrices are 0- based where i|j =0 has meaning of "not started reading" index
     // Strings are 0- based, therefore we -1 to get emission for symbol
@@ -301,7 +296,7 @@ float Pair_HMM::calculate_forward_alignment_prob() {
     }
 
     // termination. Calculating the max(m) -> end state
-    std::cout << "Forward termination  ...  "<< std::endl;
+    //std::cout << "Forward termination  ...  "<< std::endl;
     for (m = 1;m < _n_states-1; m++) {
         mforward[m_index(_n_x, _n_y, _n_states - 1)]+=
                 mforward[m_index(_n_x, _n_y, m)] * _transitions[m * _n_states + (_n_states - 1)];
@@ -328,13 +323,17 @@ float Pair_HMM::calculate_forward_alignment_prob() {
 
 float Pair_HMM::calculate_viterbi_alignment() {
 
-    int k, m, t,i,j,z;
+    int k, m,i,j;
 
+
+    _aligned_x = "";
+    _aligned_y = "";
+    _state_path = "";
     float *mviterbi = new float[(_n_x+1) * (_n_y+1) * _n_states];
     int *pointers = new int[(_n_x+1) * (_n_y+1) * _n_states];
 
     // Initialization step
-    std::cout << "Viterbi initialization  ...  "<< std::endl;
+    //std::cout << "Viterbi initialization  ...  "<< std::endl;
 
     for (k = 0; k <  _n_states; k++) {
         for (i = 0; i <=  _n_x; i++) {
@@ -367,11 +366,9 @@ float Pair_HMM::calculate_viterbi_alignment() {
                         j_prev = j - delta_y(k);
                         if (i_prev >= 0 and j_prev >= 0) { // check if we previous path exists
 
-                            float trans = _transitions[m * _n_states + k];
 
                             if (i_prev >= 0 and j_prev >= 0) {
 
-                                float vit = mviterbi[m_index(i_prev, j_prev, m)];
                                 path_elem = mviterbi[m_index(i_prev, j_prev, m)] * _transitions[m * _n_states + k];
                                 if (path_elem > ml_path_proba) {
 
@@ -392,8 +389,8 @@ float Pair_HMM::calculate_viterbi_alignment() {
             }
         }
     }
-    // termination. Calculating the max(m) -> end state
-    std::cout << "Viterbi termination  ...  "<< std::endl;
+    // termination. Calculating the max(m -> end state)
+    //std::cout << "Viterbi termination  ...  "<< std::endl;
 
     ml_path_proba = 0;
     arg_max_previous_state = -1;
@@ -408,19 +405,23 @@ float Pair_HMM::calculate_viterbi_alignment() {
     pointers[m_index(_n_x, _n_y, _n_states-1)] = arg_max_previous_state;
 
     // Traceback
-    std::cout << "Viterbi traceback  ...  "<< std::endl;
+    //std::cout << "Viterbi traceback  ...  "<< std::endl;
     int next_state_pointer = arg_max_previous_state;
 
     int s=0;
-    char *annotated_x = new char[_n_x+_n_y];
-    char *annotated_y = new char[_n_x+_n_y];
 
-    int  *states_path = new int[_n_x+_n_y];
+    //+ _n_states for option to have the silent states included into paths
+    // we assume that there are no cycles and no more than _n_states visits
+    char *annotated_x = new char[_n_x+_n_y+_n_states];
+    char *annotated_y = new char[_n_x+_n_y+_n_states];
+
+    int  *states_path = new int[_n_x+_n_y+1];
     states_path[s] = next_state_pointer;
 
     int current_state;
     i = _n_x;
     j = _n_y;
+    //std::cout << "Viterbi traceback  ... 1 "<< std::endl;
     while(next_state_pointer != -1 ){
         current_state = next_state_pointer;
         states_path[s] = current_state ;
@@ -453,29 +454,39 @@ float Pair_HMM::calculate_viterbi_alignment() {
         j = j - delta_y(current_state);
         s++;
     }
-//    aligned_x = "";
-//    aligned_y = "";
-//    state_path = "";
+    //std::cout << "Viterbi traceback  ... 2 "<< std::endl;
+//    _aligned_x = "";
+//    _aligned_y = "";
+//    _state_path = "";
     for (i = s-2;i >=0;i--){
-        aligned_x+= annotated_x[i];
-        aligned_y+= annotated_y[i];
-        state_path+= (char)(states_path[i]+'0') ;
+        //std::cout << "Viterbi traceback  ... 3. "<<i<< std::endl;
+        _aligned_x+= annotated_x[i];
+        _aligned_y+= annotated_y[i];
+        _state_path+= (char)(states_path[i] + '0') ;
     }
 
-    std::cout<<state_path <<'\n'<< aligned_x<<'\n'<<aligned_y<<'\n';
+    std::cout << _state_path << '\n' << _aligned_x << '\n' << _aligned_y << '\n';
     float res_ml = mviterbi[m_index(_n_x, _n_y, _n_states - 1)];
-    std::cout << "Likelihood in viterbi alg P(X, Y |" << _model_name << " )" << res_ml << std::endl;
+    //std::cout << "Likelihood in viterbi alg P(X, Y |" << _model_name << " )" << res_ml << std::endl;
+
 
     delete[] annotated_x;
     delete[] annotated_y;
     delete[] states_path;
     delete[] mviterbi;
     delete[] pointers;
-
+    //std::cout << "Viterbi traceback  ... 4 "<< std::endl;
     return res_ml;
 }
-
-
+std::string Pair_HMM::get_annotated_x(){
+    return this->_aligned_x;
+}
+std::string Pair_HMM::get_annotated_y(){
+    return this->_aligned_y;
+}
+std::string Pair_HMM::get_annotated_state_path(){
+    return this->_state_path;
+}
 
 void Pair_HMM::set_model_name(std::string model_name) {
     this->_model_name = model_name;

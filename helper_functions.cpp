@@ -50,10 +50,12 @@ std::string *sequences_reader(std::string filename, int number_of_sequences) {
     std::ifstream f(filename.c_str());
     std::string *sequence_set = NULL;
     if (f.is_open()) {
-        sequence_set = new std::string[number_of_sequences];
-        while (getline(f, line)) {
+        sequence_set = new std::string[number_of_sequences+1];
+        while (i<number_of_sequences) {
+            getline(f, line);
             sequence_set[i] = line;
             //cout<< sequence_set[i];
+            std::cout << "read " << sequence_set[i] <<" " <<i<<std::endl;
             i++;
         }
     } else { std::cout << "cannot open " << filename << std::endl; };
@@ -62,39 +64,3 @@ std::string *sequences_reader(std::string filename, int number_of_sequences) {
     return sequence_set;
 }
 
-std::string array_to_string(int *arr, int n_elem) {
-    std::string reconstructed_states_string,t_string;
-    std::stringstream ss;
-////
-    for (int t = 0; t <= n_elem; t++) {
-        ss << arr[t];
-        t_string = ss.str();
-        ss.str(std::string());
-        reconstructed_states_string.append(t_string);
-        //cout<<to_string(arr[t]);
-    }
-
-    return reconstructed_states_string;
-}
-
-int *string_to_arr(std::string s_sequence) {
-
-    int n = s_sequence.length();
-    int *arr = new int[n];
-
-    for (int i = 0; i < n; i++) {
-        arr[i] = s_sequence[i] - '0';
-    }
-    return arr;
-}
-
-std::string annotate_path(std::string reconstructed_states) {
-
-    std::string annoteted_states;
-    int i, n = reconstructed_states.length();
-    for (i = 0; i < n; i++) {
-        if (reconstructed_states[i] == '1') { annoteted_states += 'F'; }
-        if (reconstructed_states[i] == '2') { annoteted_states += 'L'; }
-    }
-    return annoteted_states;
-}

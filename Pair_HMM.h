@@ -25,50 +25,50 @@ class Pair_HMM {
 public:
     Pair_HMM(int n_states, int n_observables, float *transitions, float *emissions);
 
-    void set_observations(std::string observation);
     void set_observations_x(const std::string& observations);
     void set_observations_y(const std::string& observations);
     void set_model_name(std::string model_name);
 
-    int *calculate_viterbi_state_path();
-    float calculate_forward_alignment_prob();
+
 
     ~Pair_HMM();
 
     void test_public_call();
     float calculate_viterbi_alignment();
+    float calculate_forward_alignment_prob();
+    std::string get_annotated_x();
+    std::string get_annotated_y();
+    std::string get_annotated_state_path();
+
 
 private:
 
     float *_transitions;
     float *_emissions;
-
-    int *_observations;
-    int _n_observations;
     int _n_states, _n_observables; // number of states, amount of possible emissions.
-
-    char *_sequence_test;
 
     int _n_x;
     int _n_y;
     char *_sequence_x;
     char *_sequence_y;
+    char *_sequence_test;
 
-    std::string aligned_x;
-    std::string aligned_y;
-    std::string state_path;
+    std::string _aligned_x;
+    std::string _aligned_y;
+    std::string _state_path;
     std::string _model_name;
 
-
+    // here the properties of states saved (Exy or Ex or Ey or silent). init in calculate_state readings()
     int (*_state_readings)[2];
 
     int delta_x(int state);
     int delta_y(int state);
 
     int m_index(int x, int y, int z);
-    static int get_character_index(char character);
 
+    //rewrite if alphabet and emission matrix structure have changed.
+    int get_character_index(char character);
     float get_emission_proba(int state,int i,int j);
-    void calculate_states_readings();
+    void calculate_states_readings(); // save what each state reads
 
 };
