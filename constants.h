@@ -7,8 +7,12 @@
 static const int N_OBSERAVBLES = 6;
 static const int N_STATES = 4;
 
-static const std::string PATH_EMISSIONS_FILE = "../Alignment_emissions.tsv";
-static const std::string PATH_TRANSITIONS_FILE = "../Alignment_transitions.tsv";
+//static const std::string PATH_EMISSIONS_FILE = "../Alignment_emissions.tsv";
+//static const std::string PATH_TRANSITIONS_FILE = "../Alignment_transitions.tsv";
+
+static const std::string PATH_EMISSIONS_FILE = "../Random_emissions.tsv";
+static const std::string PATH_TRANSITIONS_FILE = "../Random_transitions.tsv";
+
 
 static const std::string PATH_INPUT_FILE = "../in_pairs.txt";
 

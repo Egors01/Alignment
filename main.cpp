@@ -23,14 +23,19 @@ int main() {
 
 
 
-    std::string s1 = "ATATATATATA";
-    std::string s2 = "TATATATATAT" ;
+    std::string s1 = "ATATAT";
+    std::string s2 = "TATATA" ;
     A.set_observations_x(s1);
     A.set_observations_y(s2);
-
-
     //A.test_public_call();
+
+
+    //A.set_model_name("Alignment");
+    A.set_model_name("Random");
+
+    float a = A.calculate_forward_alignment_prob();
     float f = A.calculate_viterbi_alignment ();
+
     std::cout<<"X: "<<s1<<" "<<s1.length()<<'\n'<<"Y: "<<s2<<" "<<s2.length()<<std::endl;
     return 0;
 }
