@@ -5,7 +5,7 @@
 
 #include "Pair_HMM.h"
 #include "helper_functions.h"
-#define  PRINT
+//#define  PRINT
 
 Pair_HMM::Pair_HMM(int n_states, int n_observables,
          float *transitions, float *emissions) {
@@ -291,21 +291,9 @@ float Pair_HMM::calculate_forward_alignment_prob() {
                         i_prev = i-delta_x(k);
                         j_prev = j-delta_y(k);
                         if (i_prev>=0 and j_prev>=0){ // check if we previous path exists
-                            mforward[m_index(i, j, k)]+= mforward[ m_index(i_prev, j_prev, m)] * _transitions[m * _n_states + k ]* get_emission_proba(k, i-1, j-1);
-                            std::cout << " i,j " << i << " " << j << " for " << m << " ->  " << k << "\t trans "
-                                      << _transitions[m * _n_states + k ] << " f[" << i_prev << "][" << j_prev << "][" << m << "] \t" << mforward[ m_index(i_prev, j_prev, m)]
-                                      << std::endl << std::setprecision(3);
+                            mforward[m_index(i, j, k)]+= mforward[ m_index(i_prev, j_prev, m)]
+                                    * _transitions[m * _n_states + k ]* get_emission_proba(k, i-1, j-1);
                         }
-                        else {
-                            std::cout << "Set zero emisssion i,j " << i << " " << j << " for " << m << " ->  " << k
-                                      << "\t trans " << _transitions[m * _n_states + k ] << "\t i_pr, j_pr " << i_prev << " " << j_prev << " "
-                                      << std::endl << std::setprecision(3);
-                        }
-
-                    }
-                    if (mforward[m_index(i, j, k)]>0){
-                        std::cout << "------\n Set i,j  f[" << i << "][" << j << "][" << k << "] \t" << mforward[ m_index(i, j, k)]
-                                 << std::endl << std::endl<< std::setprecision(3);
                     }
                 }
             }
@@ -317,7 +305,6 @@ float Pair_HMM::calculate_forward_alignment_prob() {
     for (m = 1;m < _n_states-1; m++) {
         mforward[m_index(_n_x, _n_y, _n_states - 1)]+=
                 mforward[m_index(_n_x, _n_y, m)] * _transitions[m * _n_states + (_n_states - 1)];
-         //std::cout << " path elem termination " <<path_elem<<" trans "<< _transitions[m * _n_states + (_n_states - 1)]<<std::endl;
     }
 
 #ifdef PRINT
@@ -329,17 +316,12 @@ float Pair_HMM::calculate_forward_alignment_prob() {
             }
             std::cout << std::endl;
         }
-
     }
-
 #endif
-
-
     float res_ml  = mforward[m_index(_n_x, _n_y, _n_states - 1)] ;
     std::cout << "Likelihood in forward alg P(X, Y |" << _model_name << " )" << res_ml << std::endl;
 
     delete[] mforward;
-
 
     return res_ml;
 }
@@ -396,16 +378,9 @@ float Pair_HMM::calculate_viterbi_alignment() {
                                     ml_path_proba = path_elem * get_emission_proba(k, i - 1, j - 1);;
                                     arg_max_previous_state = m;
                                 }
-                                std::cout << " i,j " << i << " " << j << " for " << m << " ->  " << k << "\t trans "
-                                          << trans << " vit[" << i_prev << "][" << j_prev << "][" << m << "] \t" << vit
-                                          << std::endl << std::setprecision(3);
-
 
                             } else { //if path does not exists - setting zero emission / ignore
                                 path_elem = 0;
-                                std::cout << "Set zero emisssion i,j " << i << " " << j << " for " << m << " ->  " << k
-                                          << "\t trans " << trans << "\t i_pr, j_pr " << i_prev << " " << j_prev << " "
-                                          << std::endl << std::setprecision(3);
                             }
 
                         }
@@ -431,13 +406,6 @@ float Pair_HMM::calculate_viterbi_alignment() {
     }
     mviterbi[m_index(_n_x, _n_y, _n_states-1)] = ml_path_proba;
     pointers[m_index(_n_x, _n_y, _n_states-1)] = arg_max_previous_state;
-
-    if (ml_path_proba==0) {
-        std::cout << "did not set ml end  " << std::endl;
-    }
-
-
-
 
     // Traceback
     std::cout << "Viterbi traceback  ...  "<< std::endl;
