@@ -1,0 +1,10 @@
+5.33569	related 
+3.76767	related 
+3.19257	related 
+2.13194	related 
+8.66318	related 
+0.0276305	related 
+10.1371	related 
+3.39611	related 
+-1.87875	unrelated 
+7.94047	related 

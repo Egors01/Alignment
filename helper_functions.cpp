@@ -8,14 +8,14 @@
 #include <iomanip>
 #include"helper_functions.h"
 
-float *read_matrix_file(std::string filename, int N, int M) {
+double *read_matrix_file(std::string filename, int N, int M) {
     std::fstream matrix_file;
     matrix_file.open(filename.c_str(), std::ios::in);
-    float *matrix = NULL;
+    double *matrix = NULL;
 
     if (matrix_file.is_open()) {
         std::cout << "File " << filename << " is open \n";
-        matrix = new float[M * N];
+        matrix = new double [M * N];
     } else {
         std::cout << "cant open " << filename << " exiting \n";
         return matrix;
@@ -31,7 +31,7 @@ float *read_matrix_file(std::string filename, int N, int M) {
 }
 
 
-void print_matrix(float *matrix, int N, int M) {
+void print_matrix(double *matrix, int N, int M) {
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++) {

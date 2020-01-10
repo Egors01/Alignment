@@ -9,11 +9,11 @@ int main() {
 
     // reading emission and transitions_al matrices from files.
 
-    float *emissions_al = read_matrix_file(PATH_EMISSIONS_FILE_ALIIGN, N_STATES, N_OBSERAVBLES);
-    float *transitions_al = read_matrix_file(PATH_TRANSITIONS_FILE_ALIGN, N_STATES, N_STATES);
+    double *emissions_al = read_matrix_file(PATH_EMISSIONS_FILE_ALIIGN, N_STATES, N_OBSERAVBLES);
+    double *transitions_al = read_matrix_file(PATH_TRANSITIONS_FILE_ALIGN, N_STATES, N_STATES);
 
-    float *emissions_rand = read_matrix_file(PATH_EMISSIONS_FILE_RANDOM, N_STATES, N_OBSERAVBLES);
-    float *transitions_rand = read_matrix_file(PATH_TRANSITIONS_FILE_RANDOM, N_STATES, N_STATES);
+    double *emissions_rand = read_matrix_file(PATH_EMISSIONS_FILE_RANDOM, N_STATES, N_OBSERAVBLES);
+    double *transitions_rand = read_matrix_file(PATH_TRANSITIONS_FILE_RANDOM, N_STATES, N_STATES);
 
     std::ofstream alignment_file_by_task(ALIGNMENT_OUTPUT_FILE.c_str());
     std::ofstream alignment_file(ALIGNMENT_OUTPUT_FILE_FULL.c_str());
@@ -37,7 +37,7 @@ int main() {
 
     std::string s1 = "";
     std::string s2 = " " ;
-    float alignment_prob,random_prob,log_odds;
+    double alignment_prob,random_prob,log_odds;
 
     // Reading sequences in_pairs and calcualting in Alignment model
     int n_sequence_to_read =20;
@@ -106,8 +106,8 @@ int main() {
 //
 //    //align_hmm.set_model_name("Alignment");
 //    align_hmm.set_model_name("Random");
-//    float a = align_hmm.calculate_forward_alignment_prob();
-//    float f = align_hmm.calculate_viterbi_alignment ();
+//    double a = align_hmm.calculate_forward_alignment_prob();
+//    double f = align_hmm.calculate_viterbi_alignment ();
 //
 //
 //

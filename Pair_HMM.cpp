@@ -8,7 +8,7 @@
 //#define  PRINT
 
 Pair_HMM::Pair_HMM(int n_states, int n_observables,
-         float *transitions, float *emissions) {
+         double *transitions, double *emissions) {
     _transitions = transitions;
     _emissions = emissions;
     _n_states = n_states;
@@ -38,7 +38,7 @@ Pair_HMM::~Pair_HMM() {
 
 void Pair_HMM::test_public_call()
 {
-    float a = get_emission_proba(3,2,2) ;
+    double a = get_emission_proba(3,2,2) ;
     std::cout<<"test output "<<a<<std::endl;
 }
 
@@ -174,7 +174,7 @@ int Pair_HMM::get_character_index(char character){
     else
         return index;
     }
-float Pair_HMM::get_emission_proba(int state,int i,int j){
+double Pair_HMM::get_emission_proba(int state,int i,int j){
 
     // Takes emission prob from the emission matrix by index of the i,j characters
 
@@ -250,11 +250,11 @@ int Pair_HMM::m_index(int x, int y, int z){
     return ((x) + (y) *(_n_x+1) + (z) *(_n_x+1)*(_n_y+1));
 }
 
-float Pair_HMM::calculate_forward_alignment_prob() {
+double Pair_HMM::calculate_forward_alignment_prob() {
 
     int k, m,i,j;
 
-    float *mforward = new float[(_n_x + 1) * (_n_y + 1) * _n_states];
+    double *mforward = new double[(_n_x + 1) * (_n_y + 1) * _n_states];
 
     // Initialization step
     //std::cout << "Forward prob initialization  ...  "<< std::endl;
@@ -313,7 +313,7 @@ float Pair_HMM::calculate_forward_alignment_prob() {
         }
     }
 #endif
-    float res_ml  = mforward[m_index(_n_x, _n_y, _n_states - 1)] ;
+    double res_ml  = mforward[m_index(_n_x, _n_y, _n_states - 1)] ;
     std::cout << "Likelihood in forward alg P(X, Y |" << _model_name << " )" << res_ml << std::endl;
 
     delete[] mforward;
@@ -321,7 +321,7 @@ float Pair_HMM::calculate_forward_alignment_prob() {
     return res_ml;
 }
 
-float Pair_HMM::calculate_viterbi_alignment() {
+double Pair_HMM::calculate_viterbi_alignment() {
 
     int k, m,i,j;
 
@@ -329,7 +329,7 @@ float Pair_HMM::calculate_viterbi_alignment() {
     _aligned_x = "";
     _aligned_y = "";
     _state_path = "";
-    float *mviterbi = new float[(_n_x+1) * (_n_y+1) * _n_states];
+    double *mviterbi = new double[(_n_x+1) * (_n_y+1) * _n_states];
     int *pointers = new int[(_n_x+1) * (_n_y+1) * _n_states];
 
     // Initialization step
@@ -347,7 +347,7 @@ float Pair_HMM::calculate_viterbi_alignment() {
 
     //   Calculation
     std::cout << "Viterbi calculation ...  "<< std::endl;
-    float path_elem = 0 ,ml_path_proba;
+    double path_elem = 0 ,ml_path_proba;
     int i_prev,j_prev,arg_max_previous_state;
 
 
@@ -466,7 +466,7 @@ float Pair_HMM::calculate_viterbi_alignment() {
     }
 
     std::cout << _state_path << '\n' << _aligned_x << '\n' << _aligned_y << '\n';
-    float res_ml = mviterbi[m_index(_n_x, _n_y, _n_states - 1)];
+    double res_ml = mviterbi[m_index(_n_x, _n_y, _n_states - 1)];
     //std::cout << "Likelihood in viterbi alg P(X, Y |" << _model_name << " )" << res_ml << std::endl;
 
 
