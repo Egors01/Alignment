@@ -8,7 +8,6 @@ int main() {
     int i = 0;
 
     // reading emission and transitions_al matrices from files.
-
     double *emissions_al = read_matrix_file(PATH_EMISSIONS_FILE_ALIIGN, N_STATES, N_OBSERAVBLES);
     double *transitions_al = read_matrix_file(PATH_TRANSITIONS_FILE_ALIGN, N_STATES, N_STATES);
 
@@ -64,12 +63,8 @@ int main() {
         alignment_prob_file << alignment_prob<<std::endl;
         random_prob_file << random_prob<<std::endl;
 
-
-
         alignment_file_by_task<< align_hmm.get_annotated_x()<<std::endl;
         alignment_file_by_task<< align_hmm.get_annotated_y()<<std::endl<<std::endl;
-
-
 
         paths_file << align_hmm.get_annotated_state_path()<<std::endl;
 
@@ -95,8 +90,7 @@ int main() {
     paths_file.close();
     alignment_prob_file.close();
     random_prob_file.close();
-//
-//
+
 //    s1 ="AAAAAAATTTCC";
 //    s2 = "AATTTTCCGG";
 //
@@ -108,9 +102,8 @@ int main() {
 //    align_hmm.set_model_name("Random");
 //    double a = align_hmm.calculate_forward_alignment_prob();
 //    double f = align_hmm.calculate_viterbi_alignment ();
-//
-//
-//
+
+
 //    std::cout<<"X: "<<s1<<" "<<s1.length()<<'\n'<<"Y: "<<s2<<" "<<s2.length()<<std::endl;
     return 0;
 }

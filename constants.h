@@ -7,7 +7,7 @@
 static const int N_OBSERAVBLES = 25;
 static const int N_STATES = 5;
 
-static const std::string PATH_PREFIX = "./";
+static const std::string PATH_PREFIX = "../";
 static const std::string PATH_EMISSIONS_FILE_ALIIGN =  PATH_PREFIX+"Alignment_emissions.tsv";
 static const std::string PATH_TRANSITIONS_FILE_ALIGN = PATH_PREFIX+"Alignment_transitions.tsv";
 

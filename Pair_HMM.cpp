@@ -123,7 +123,9 @@ void Pair_HMM::calculate_states_readings(){
 void Pair_HMM::set_observations_x(const std::string& observations) {
 
     if (_sequence_x!=NULL) {
-        delete [] _sequence_x;}
+        delete [] _sequence_x;
+        _sequence_x = NULL;}
+
     _n_x = observations.length();
     _sequence_x = new char [observations.length()+1];
     std::strcpy (_sequence_x, observations.c_str());
@@ -134,7 +136,8 @@ void Pair_HMM::set_observations_x(const std::string& observations) {
 void Pair_HMM::set_observations_y(const std::string& observations) {
 
     if (_sequence_y!=NULL) {
-        delete [] _sequence_y;}
+        delete [] _sequence_y;
+        _sequence_y = NULL;}
     _n_y = observations.length();
     _sequence_y = new char [observations.length()+1];
     std::strcpy (_sequence_y, observations.c_str());
@@ -161,18 +164,23 @@ int Pair_HMM::delta_y(int state){
 }
 int Pair_HMM::get_character_index(char character){
 
-    int index = -777;
-
-    if (character == 'A') {  index = 0; }
-    if (character == 'T') {  index = 1; }
-    if (character == 'G') {  index = 2; }
-    if (character == 'C') {  index = 3; }
-    if (index == -777){
-        std::cout<<"Attempt to read not-specified character :"<<character<<std::endl;
-        throw std::invalid_argument( "received wrong index" );
-    }
+    if (character == 'A') {
+        int  index = 0; return index;}
     else
-        return index;
+        if (character == 'T') {
+            int index = 1; return index;}
+        else
+            if (character == 'G') {
+                int index = 2; return index;}
+            else
+                if (character == 'C') {
+                    int index = 3; return index;}
+                else {
+                    std::cout<<"Attempt to read not-specified characte  :"<<character<<std::endl;
+                    throw std::invalid_argument( "received wrong index" );
+                }
+
+
     }
 double Pair_HMM::get_emission_proba(int state,int i,int j){
 
@@ -365,26 +373,19 @@ double Pair_HMM::calculate_viterbi_alignment() {
                         i_prev = i - delta_x(k);
                         j_prev = j - delta_y(k);
                         if (i_prev >= 0 and j_prev >= 0) { // check if we previous path exists
-
-
-                            if (i_prev >= 0 and j_prev >= 0) {
-
                                 path_elem = mviterbi[m_index(i_prev, j_prev, m)] * _transitions[m * _n_states + k];
                                 if (path_elem > ml_path_proba) {
 
                                     ml_path_proba = path_elem * get_emission_proba(k, i - 1, j - 1);;
                                     arg_max_previous_state = m;
                                 }
-
-                            } else { //if path does not exists - setting zero emission / ignore
-                                path_elem = 0;
                             }
-
+                        else { //if path does not exists - setting zero emission / ignore
+                            path_elem = 0;
                         }
                         mviterbi[m_index(i, j, k)] = ml_path_proba;
                         pointers[m_index(i, j, k)] = arg_max_previous_state;
                     }
-
                 }
             }
         }
