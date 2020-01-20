@@ -36,14 +36,6 @@ Pair_HMM::~Pair_HMM() {
 
 }
 
-void Pair_HMM::test_public_call()
-{
-    double a = get_emission_proba(3,2,2) ;
-    std::cout<<"test output "<<a<<std::endl;
-}
-
-
-
 
 void Pair_HMM::calculate_states_readings(){
 
@@ -146,20 +138,29 @@ void Pair_HMM::set_observations_y(const std::string& observations) {
 
 int Pair_HMM::delta_x(int state){
 
-    if (_state_readings[state][0] == 1){
+    if (_state_readings[state][0] == 1)
         return 1;
-    }
-    else
-        return 0;
+    else if (_state_readings[state][0] == 0)
+            return 0;
+         else {
+            std::cout<<"attempt to check non-existing state :"<<state<<std::endl;
+            throw std::invalid_argument( "delta_x(): state not exists" );
+         }
 }
 
 int Pair_HMM::delta_y(int state){
 
-    if (_state_readings[state][1] == 1){
+    if (_state_readings[state][1] == 1)
         return 1;
-    }
     else
-        return 0;
+        if (_state_readings[state][1] == 0)
+
+             return 0;
+        else {
+            std::cout<<"attempt to check non-existing state : "<<state<<std::endl;
+            throw std::invalid_argument( "delta_y(): state not exists" );
+        }
+
 
 }
 int Pair_HMM::get_character_index(char character){
@@ -176,7 +177,7 @@ int Pair_HMM::get_character_index(char character){
                 if (character == 'C') {
                     int index = 3; return index;}
                 else {
-                    std::cout<<"Attempt to read not-specified characte  :"<<character<<std::endl;
+                    std::cout<<"Attempt to read not-specified character  :"<<character<<std::endl;
                     throw std::invalid_argument( "received wrong index" );
                 }
 
@@ -237,24 +238,33 @@ double Pair_HMM::get_emission_proba(int state,int i,int j){
     }
     //if silent state
     if (_state_readings[state][0] == 0 and  _state_readings[state][1] == 0){
-        if (not(state == 0 or state ==_n_states-1)){ // not and and not start
-            return 1; // dont count for emission proba
+        if (not(state == 0 or state ==_n_states-1)){ // not final and not start state
+            //dont count for emission proba. This is to enable blank XY reads
+             return 1;
         }
         else
-            return  0; // zero if it is start or end
-
-        //int emission_matrix_ind = 24;
-        //return _emissions[state * _n_observables + emission_matrix_ind];
+            return  0; // no emisssion if it is start or final state
     }
-    else{ //if _state_readings
+    else{ //if incorrect index was passed in fuction
         std::cout<<"Cannot find _state_readings[state][0] _state_readings[state][1] "
-                   "for arguments i,j: "<<i<<", "<<j<<std::endl;
-        throw std::invalid_argument( "received wrong position");
+                   "for arguments state,i,j: "<<state<<", "<<i<<", "<<j<<std::endl;
+        throw std::invalid_argument( "received incorrect position");
     }
 }
 
 int Pair_HMM::m_index(int x, int y, int z){
+
     //return ((x) + (y) *_n_x + (z) *_n_x*_n_y);
+    if (x>_n_x){
+        throw std::invalid_argument( "received incorrect x index in 3-dim matrix: "+to_string(x));
+    }
+    if (y>_n_y){
+        throw std::invalid_argument( "received incorrect y index in 3-dim matrix: "+to_string(y));
+    }
+    if (z>=_n_states){
+        throw std::invalid_argument( "received incorrect z index in 3-dim matrix: "+to_string(z));
+    }
+
     return ((x) + (y) *(_n_x+1) + (z) *(_n_x+1)*(_n_y+1));
 }
 
@@ -334,9 +344,9 @@ double Pair_HMM::calculate_viterbi_alignment() {
     int k, m,i,j;
 
 
-    _aligned_x = "";
-    _aligned_y = "";
-    _state_path = "";
+    this-> _aligned_x = "";
+    this-> _aligned_y = "";
+    this-> _state_path = "";
     double *mviterbi = new double[(_n_x+1) * (_n_y+1) * _n_states];
     int *pointers = new int[(_n_x+1) * (_n_y+1) * _n_states];
 
@@ -443,7 +453,7 @@ double Pair_HMM::calculate_viterbi_alignment() {
         }
         //silent if we have it i.e in random model
         if (_state_readings[current_state][0] == 0 and _state_readings[current_state][1] == 0){
-            // Y read
+            // Silent state
             annotated_x[s] = '-';
             annotated_y[s] = '-';
         }
@@ -456,9 +466,7 @@ double Pair_HMM::calculate_viterbi_alignment() {
         s++;
     }
     //std::cout << "Viterbi traceback  ... 2 "<< std::endl;
-//    _aligned_x = "";
-//    _aligned_y = "";
-//    _state_path = "";
+
     for (i = s-2;i >=0;i--){
         //std::cout << "Viterbi traceback  ... 3. "<<i<< std::endl;
         _aligned_x+= annotated_x[i];
@@ -489,6 +497,6 @@ std::string Pair_HMM::get_annotated_state_path(){
     return this->_state_path;
 }
 
-void Pair_HMM::set_model_name(std::string model_name) {
+void Pair_HMM::set_model_name(const std::string& model_name) {
     this->_model_name = model_name;
 }

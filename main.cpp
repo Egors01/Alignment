@@ -23,8 +23,8 @@ int main() {
     std::ofstream log_ratios_file(LOG_RATIOS_FILE.c_str());
 
 
-    //print_matrix(emissions_al, 5, 25);
-    //print_matrix(transitions_al, 5, 5);
+    print_matrix(emissions_al, 5, 25);
+    print_matrix(transitions_al, 5, 5);
 
     std::cout<<"Alignment pair HMM \n";
     Pair_HMM align_hmm(N_STATES, N_OBSERAVBLES, transitions_al, emissions_al);
@@ -91,19 +91,11 @@ int main() {
     alignment_prob_file.close();
     random_prob_file.close();
 
-//    s1 ="AAAAAAATTTCC";
-//    s2 = "AATTTTCCGG";
-//
-//    align_hmm.set_observations_x(s1);
-//    align_hmm.set_observations_y(s2);
-//    //align_hmm.test_public_call();
-//
-//    //align_hmm.set_model_name("Alignment");
-//    align_hmm.set_model_name("Random");
-//    double a = align_hmm.calculate_forward_alignment_prob();
-//    double f = align_hmm.calculate_viterbi_alignment ();
+    delete [] emissions_al;
+    delete [] emissions_rand;
+    delete [] transitions_al;
+    delete [] transitions_rand;
+    delete [] sequences;
 
-
-//    std::cout<<"X: "<<s1<<" "<<s1.length()<<'\n'<<"Y: "<<s2<<" "<<s2.length()<<std::endl;
     return 0;
 }

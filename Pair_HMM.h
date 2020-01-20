@@ -24,20 +24,15 @@ class Pair_HMM {
 
 public:
     Pair_HMM(int n_states, int n_observables, double *transitions, double *emissions);
+    ~Pair_HMM();
 
     void set_observations_x(const std::string& observations);
     void set_observations_y(const std::string& observations);
-    void set_model_name(std::string model_name);
-
-
-
-    ~Pair_HMM();
-
-    void test_public_call();
+    void set_model_name(const std::string& model_name);
 
     double calculate_viterbi_alignment();
-
     double calculate_forward_alignment_prob();
+
     std::string get_annotated_x();
     std::string get_annotated_y();
     std::string get_annotated_state_path();
@@ -53,7 +48,6 @@ private:
     int _n_y;
     char *_sequence_x;
     char *_sequence_y;
-    char *_sequence_test;
 
     std::string _aligned_x;
     std::string _aligned_y;
@@ -70,7 +64,6 @@ private:
 
     //rewrite if alphabet and emission matrix structure have changed.
     int get_character_index(char character);
-
     double get_emission_proba(int state,int i,int j);
     void calculate_states_readings(); // save what each state reads
 

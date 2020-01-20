@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <sstream>
 
+#define to_string( x ) static_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
 
 double*read_matrix_file( std::string filename,  int N,  int M);
 
