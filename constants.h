@@ -8,13 +8,14 @@ static const int N_OBSERAVBLES = 25;
 static const int N_STATES = 5;
 
 static const std::string PATH_PREFIX = "./";
-static const std::string PATH_EMISSIONS_FILE_ALIIGN =  PATH_PREFIX+"Alignment_emissions.tsv";
-static const std::string PATH_TRANSITIONS_FILE_ALIGN = PATH_PREFIX+"Alignment_transitions.tsv";
+static const std::string PATH_PREFIX_INPUT = "./input_files/";
+static const std::string PATH_EMISSIONS_FILE_ALIIGN =  PATH_PREFIX_INPUT+"Alignment_emissions.tsv";
+static const std::string PATH_TRANSITIONS_FILE_ALIGN =PATH_PREFIX_INPUT+"Alignment_transitions.tsv";
 
-static const std::string PATH_EMISSIONS_FILE_RANDOM =   PATH_PREFIX+"Random_emissions.tsv";
-static const std::string PATH_TRANSITIONS_FILE_RANDOM = PATH_PREFIX+"Random_transitions.tsv";
+static const std::string PATH_EMISSIONS_FILE_RANDOM =   PATH_PREFIX_INPUT+"Random_emissions.tsv";
+static const std::string PATH_TRANSITIONS_FILE_RANDOM = PATH_PREFIX_INPUT+"Random_transitions.tsv";
 
-static const std::string PATH_INPUT_FILE = PATH_PREFIX+"in_pairs.txt";
+static const std::string PATH_INPUT_FILE = PATH_PREFIX_INPUT+"in_pairs.txt";
 
 
 static const std::string ALIGNMENT_OUTPUT_FILE_FULL = PATH_PREFIX+"alignments_with_states_and_ratios.txt";
